@@ -11,7 +11,7 @@
 // Execute `rustlings hint iterators5` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 use std::collections::HashMap;
 
@@ -35,7 +35,14 @@ fn count_for(map: &HashMap<String, Progress>, value: Progress) -> usize {
 fn count_iterator(map: &HashMap<String, Progress>, value: Progress) -> usize {
     // map is a hashmap with String keys and Progress values.
     // map = { "variables1": Complete, "from_str": None, ... }
-    todo!();
+    let mut out: usize = 0;
+    let a = |&e| {
+        if value == e {
+            out += 1;
+        }
+    };
+    map.values().for_each(a);
+    out
 }
 
 fn count_collection_for(collection: &[HashMap<String, Progress>], value: Progress) -> usize {
@@ -54,7 +61,16 @@ fn count_collection_iterator(collection: &[HashMap<String, Progress>], value: Pr
     // collection is a slice of hashmaps.
     // collection = [{ "variables1": Complete, "from_str": None, ... },
     //     { "variables2": Complete, ... }, ... ]
-    todo!();
+    let mut out: usize = 0;
+    let mut a = |&e| {
+        if value == e {
+            out += 1;
+        }
+    };
+    for i in collection.iter() {
+        i.values().for_each(&mut a);
+    }
+    out
 }
 
 #[cfg(test)]
@@ -82,11 +98,11 @@ mod tests {
     #[test]
     fn count_complete_equals_for() {
         let map = get_map();
-        let progress_states = vec![Progress::Complete, Progress::Some, Progress::None];
-        for progress_state in progress_states {
+        let progressStates = vec![Progress::Complete, Progress::Some, Progress::None];
+        for progressState in progressStates {
             assert_eq!(
-                count_for(&map, progress_state),
-                count_iterator(&map, progress_state)
+                count_for(&map, progressState),
+                count_iterator(&map, progressState)
             );
         }
     }
@@ -114,13 +130,13 @@ mod tests {
 
     #[test]
     fn count_collection_equals_for() {
-        let progress_states = vec![Progress::Complete, Progress::Some, Progress::None];
+        let progressStates = vec![Progress::Complete, Progress::Some, Progress::None];
         let collection = get_vec_map();
 
-        for progress_state in progress_states {
+        for progressState in progressStates {
             assert_eq!(
-                count_collection_for(&collection, progress_state),
-                count_collection_iterator(&collection, progress_state)
+                count_collection_for(&collection, progressState),
+                count_collection_iterator(&collection, progressState)
             );
         }
     }
