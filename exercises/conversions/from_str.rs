@@ -31,27 +31,45 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
-// 3. Only 2 elements should be returned from the split, otherwise return an
-//    error
+// 3. Only 2 elements should be returned from the split, otherwise return an error
 // 4. Extract the first element from the split operation and use it as the name
-// 5. Extract the other element from the split operation and parse it into a
-//    `usize` as the age with something like `"4".parse::<usize>()`
-// 6. If while extracting the name and the age something goes wrong, an error
-//    should be returned
+// 5. Extract the other element from the split operation and parse it into a `usize` as the age
+//    with something like `"4".parse::<usize>()`
+// 6. If while extracting the name and the age something goes wrong, an error should be returned
 // If everything goes well, then return a Result of a Person object
 //
-// As an aside: `Box<dyn Error>` implements `From<&'_ str>`. This means that if
-// you want to return a string error message, you can do so via just using
-// return `Err("my error message".into())`.
+// As an aside: `Box<dyn Error>` implements `From<&'_ str>`. This means that if you want to return a
+// string error message, you can do so via just using return `Err("my error message".into())`.
 
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if s.len() == 0 {
+            return Err(ParsePersonError::Empty);
+        }
+
+        let arr: Vec<&str> = s.split(',').collect();
+
+        if 2 != arr.len() {
+            return Err(ParsePersonError::BadLen);
+        }
+        let name = arr.get(0).unwrap();
+        if name.len() == 0 {
+            return Err(ParsePersonError::NoName);
+        }
+        let name = name.to_string();
+
+        let age = arr.get(1).unwrap().parse::<usize>();
+        if let Err(msg) = age {
+            return Err(ParsePersonError::ParseInt(msg));
+        }
+        let age = age.unwrap();
+
+        Ok(Person { name, age })
     }
 }
 
